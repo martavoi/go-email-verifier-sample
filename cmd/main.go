@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/mail"
 	"strings"
 
 	emailverifier "github.com/AfterShip/email-verifier"
@@ -45,9 +46,17 @@ func main() {
 	}
 
 	for _, email := range emails {
-		ret, err := v.Verify(email)
 		sb := strings.Builder{}
-		sb.WriteString(fmt.Sprintf("Input %s -> ", email))
+
+		_, err := mail.ParseAddress(email)
+		if err == nil {
+			sb.WriteString(fmt.Sprintf("RFC 5322 valid email string: %s ", email))
+		} else {
+			sb.WriteString(fmt.Sprintf("RFC 5322 invalid email string: %s ", email))
+		}
+
+		ret, err := v.Verify(email)
+
 		if err != nil {
 			sb.WriteString(fmt.Sprintf("Error: { %v }; ", err))
 		}
